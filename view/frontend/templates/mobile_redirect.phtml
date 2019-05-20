@@ -1,0 +1,49 @@
+<?php
+// @codingStandardsIgnoreFile
+$form_data = $block->getFormData();
+$form_url = $block->getFormUrl();
+?>
+<div class="cccavenue-checkout">
+	<?php
+	if( !$block->getOrderOk() )
+	{
+		?>
+		<p><?php echo $block->getErrorMessage()?></p>
+		<button id="btnClose">Back</button>
+		<script type="text/javascript">
+		    require(['jquery'], function($){
+		     	$(document).ready(function(){
+					$('#btnClose').on('click', function(e){
+						localStorage.setItem('isCloseSelf', 'yes');
+						e.preventDefault();
+					});
+		 		});
+		    });
+		</script>
+	<?php
+	} else
+	{
+	?>
+		<p><?php echo __( 'Processing order #%1... Please wait.', $block->escapeHtml( $block->getOrderId() ) ) ?></p>
+
+	<img src="<?php echo $block->getViewFileUrl( 'AWstreams_Ccavenue::images/ajax-loader.gif' );?>" /><br/>
+	<?php echo __( 'Redirecting...' );?>
+		<form id="frm_ccavenue_redirect" action="<?php echo $form_url?>" method="GET" style="display: none">
+			<?php
+			foreach ($form_data as $key => $val) {
+				echo "<input type='hidden' name='{$key}' value='{$val}' />";
+			}
+			?>
+		</form>
+		<script type="text/javascript">
+		    require(['jquery'], function($){
+    			$(document).ready(function () {
+    			    localStorage.setItem('isCloseSelf', 'no');
+    				$('#frm_ccavenue_redirect').submit();
+    			});
+		    });
+		</script>
+		<?php
+	}
+	?>
+</div>
